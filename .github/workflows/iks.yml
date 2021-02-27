@@ -17,7 +17,7 @@ env:
   IBM_CLOUD_REGION: us-south
   ICR_NAMESPACE: ${{ secrets.ICR_NAMESPACE }}
   REGISTRY_HOSTNAME: dockerhub
-  IMAGE_NAME: raniasaleh/web-dvwa
+  IMAGE_NAME: web-dvwa
   IKS_CLUSTER: asset-test-rania # name or id of cluster
   DEPLOYMENT_NAME: web-dvwa
   PORT: 5001
@@ -44,7 +44,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: $REGISTRY_HOSTNAME/$ICR_NAMESPACE:latest
+          tags: $IMAGE_NAME:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
