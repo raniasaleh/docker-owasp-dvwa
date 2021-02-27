@@ -27,8 +27,6 @@ kind: Service
 metadata:
   name: web-dvwa
 spec:
-  clusterIP: 172.21.140.147
-  externalTrafficPolicy: Cluster
   selector:
     app: web-dvwa
     tier: web-dvwa
