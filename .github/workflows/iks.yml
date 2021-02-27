@@ -21,6 +21,7 @@ env:
   IKS_CLUSTER: asset-test-rania # name or id of cluster
   DEPLOYMENT_NAME: web-dvwa
   PORT: 5001
+  PROJECT_PATH: .
 
 jobs:
   docker:
