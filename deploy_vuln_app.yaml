@@ -21,3 +21,18 @@ spec:
         ports:
         - containerPort: 80
           name: web-dvwa
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-dvwa
+spec:
+  selector:
+    app: web-dvwa
+    tier: web-dvwa
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
