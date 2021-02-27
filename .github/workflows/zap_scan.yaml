@@ -8,9 +8,9 @@ on:
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
-    name: Scan ZAP website
+    name: Scan the deployed website
     steps:
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.3.0
         with:
-          target: 'https://www.zaproxy.org/'
+          target: 'http://169.57.112.57:30001/index.php'
