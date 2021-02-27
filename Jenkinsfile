@@ -23,13 +23,13 @@ pipeline {
 								}
 						}
 				}
-				// stage('Deploy to ibmcloud') {
-				// 		steps{
-				// 			 sh '''
-				// 				 #!/bin/bash
-				// 				kubectl apply -f deploy_vuln_app.yaml -n test --validate=false
-				// 				'''
-				// 		}
-				// }
+				stage('Deploy to ibmcloud') {
+						steps{
+							 sh '''
+								 #!/bin/bash
+								kubectl apply -f deploy_vuln_app.yaml -n test --validate=false
+								'''
+						}
+				}
 		}
 }

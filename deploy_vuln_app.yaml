@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-dvwa
+  labels:
+    app: web-dvwa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-dvwa
+  template:
+    metadata:
+      labels:
+        app: web-dvwa
+    spec:
+      containers:
+      - name: web-dvwa
+        image: raniasaleh/web-dvwa
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: web-dvwa
