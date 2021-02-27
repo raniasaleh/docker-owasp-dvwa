@@ -29,7 +29,6 @@ metadata:
 spec:
   selector:
     app: web-dvwa
-    tier: web-dvwa
   ports:
   - protocol: "TCP"
     port: 80
