@@ -11,7 +11,6 @@ jobs:
     name: Scan the deployed website
     steps:
       - name: ZAP Scan
-        # uses: zaproxy/action-baseline@v0.3.0
           uses: zaproxy/action-full-scan@v0.1.0
         with:
           target: 'http://169.57.112.57:30001/index.php'
