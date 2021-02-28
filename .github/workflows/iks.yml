@@ -54,8 +54,8 @@ jobs:
         ibmcloud config --check-version=false
         ibmcloud plugin install -f kubernetes-service
         ibmcloud plugin install -f container-registry
-        curl -sSL https://github.com/ahmetb/kubectx/releases/download/v0.9.3/kubectx_v0.9.3_darwin_x86_64.tar.gz | tar -C /usr/local/ -xz
-        export PATH=/usr/local/kubectx-0.9.3:$PATH
+
+        apt-get install kubectx
     # Authenticate with IBM Cloud CLI
     - name: Authenticate with IBM Cloud CLI
       run: |
