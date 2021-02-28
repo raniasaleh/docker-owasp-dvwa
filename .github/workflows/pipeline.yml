@@ -64,16 +64,19 @@ jobs:
         with:
           push: true
           tags: raniasaleh/web-dvwa:latest
-      # -
-      #   name: VA scan
-      #   uses: anchore/scan-action@v2
-      #   with:
-      #     image: "raniasaleh/web-dvwa:latest"
-      #     # path: "./Dockerfile"
-      #     fail-build: false
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+  VA:
+    name: Deploy to IBM Cloud
+    runs-on: ubuntu-latest
+    steps:
+    -
+      name: VA scan
+      uses: anchore/scan-action@v2
+      with:
+        image: "raniasaleh/web-dvwa:latest"
+        fail-build: true
   Deploy:
     needs: Build-publish-Image
     name: Deploy to IBM Cloud
@@ -101,7 +104,6 @@ jobs:
       run: |
         ibmcloud ks cluster config --cluster $IKS_CLUSTER
         kubectl config current-context
-        kubectl apply -f namespace.yaml
         kubectl apply -f deployment.yaml
   zap_scan:
     needs: Deploy
