@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ ICR_NAMESPACE }}/web-dvwa:latest
+          tags: raniasaleh/web-dvwa:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
