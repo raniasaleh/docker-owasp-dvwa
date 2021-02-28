@@ -13,6 +13,18 @@ env:
   IKS_CLUSTER: asset-test-rania # name or id of cluster
 
 jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.repo_token }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   Build-publish-Image:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
@@ -55,7 +67,7 @@ jobs:
         ibmcloud plugin install -f kubernetes-service
         ibmcloud plugin install -f container-registry
 
-        apt-get install kubectx
+        sudo apt-get install kubectx
     # Authenticate with IBM Cloud CLI
     - name: Authenticate with IBM Cloud CLI
       run: |
@@ -73,7 +85,7 @@ jobs:
   zap_scan:
     needs: Deploy
     runs-on: ubuntu-latest
-    name: Scan the deployed website
+    name: Scan he Deployed Website
     steps:
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.1.0
