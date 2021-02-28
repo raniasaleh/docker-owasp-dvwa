@@ -13,6 +13,16 @@ env:
   IKS_CLUSTER: asset-test-rania # name or id of cluster
 
 jobs:
+  DependencyCheck:
+    name: Dependency Check
+    steps:
+    steps:
+    - uses: symfonycorp/security-checker-action@v2
+      with:
+          disable-exit-code: 1
+      id: security-check
+    - name: Display the vulnerabilities as JSON
+      run: echo ${{ steps.security-check.outputs.vulns }}
   sonarcloud:
     name: Run Sonar Scan
     runs-on: ubuntu-latest
@@ -50,11 +60,6 @@ jobs:
           push: true
           tags: raniasaleh/web-dvwa:latest
       -
-          name: VA Scaning
-          uses: Azure/container-scan@v0
-          with:
-            image-name: contoso.azurecr.io/k8sdemo:${{ github.sha }}
-      -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   Deploy:
@@ -75,7 +80,7 @@ jobs:
 
         curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
         sudo apt-get update
-        sudo apt-get install -y  kubeadm 
+        sudo apt-get install -y  kubeadm
     # Authenticate with IBM Cloud CLI
     - name: Authenticate with IBM Cloud CLI
       run: |
