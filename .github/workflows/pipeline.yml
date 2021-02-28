@@ -15,6 +15,7 @@ env:
 jobs:
   DependencyCheck:
     name: Dependency Check
+    runs-on: ubuntu-latest
     steps:
     - uses: symfonycorp/security-checker-action@v2
       with:
