@@ -95,7 +95,6 @@ jobs:
         ibmcloud ks cluster config --cluster $IKS_CLUSTER
         kubectl config current-context
         kubectl apply -f namespace.yaml
-        kubens web-dvwa
         kubectl apply -f deployment.yaml
   zap_scan:
     needs: Deploy
