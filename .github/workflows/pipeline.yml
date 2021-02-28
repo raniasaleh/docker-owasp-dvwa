@@ -68,7 +68,8 @@ jobs:
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   VA:
-    name: Deploy to IBM Cloud
+    name: VA Scanning
+    needs: Build-publish-Image
     runs-on: ubuntu-latest
     steps:
     -
