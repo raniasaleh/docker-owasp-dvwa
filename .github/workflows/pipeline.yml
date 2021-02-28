@@ -13,8 +13,8 @@ env:
   IKS_CLUSTER: asset-test-rania # name or id of cluster
 
 jobs:
-  dependcy:
-    name: dependcy
+  dependcy-check:
+    name: OWASP Dependency Check
     runs-on: 'ubuntu-latest'
     steps:
     - uses: sburris/dependency-check-action@master
@@ -42,7 +42,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   Build-publish-Image:
     name: Build and Push Docker Image
-    needs: [sonarcloud, check-for-secrets]
+    needs: [dependcy-check, sonarcloud, check-for-secrets]
     runs-on: ubuntu-latest
     steps:
       -
@@ -61,7 +61,7 @@ jobs:
         name: VA scan
         uses: anchore/scan-action@v2
         with:
-          image: "raniasaleh/web-dvwa:latest"
+          # image: "raniasaleh/web-dvwa:latest"
           path: "./Dockerfile"
           fail-build: true
       -
