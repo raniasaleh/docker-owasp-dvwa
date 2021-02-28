@@ -6,16 +6,16 @@ on: [push]
 # Environment variables available to all jobs and steps in this workflow
 env:
   IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
-  IBM_CLOUD_REGION: us-south
-  ICR_NAMESPACE: raniasaleh
-  REGISTRY_HOSTNAME: dockerhub
+  IBM_CLOUD_REGION: ${{ secrets.IBM_CLOUD_REGION }}
+  IKS_CLUSTER: ${{ secrets.IKS_CLUSTER }} # name or id of cluster
+  NAMESPACE: ${{ secrets.NAMESPACE }}
+  IP: ${{ secrets.IKS_CLUSTER_IP }}
   IMAGE_NAME: web-dvwa
-  IKS_CLUSTER: asset-test-rania # name or id of cluster
-
+  PORT: 30002
 jobs:
   fetch-code:
     runs-on: 'ubuntu-latest'
-    name: Fetch latest code
+    name: Fetch Latest Code
     steps:
     - uses: actions/checkout@master
       with:
@@ -28,16 +28,16 @@ jobs:
     steps:
     - uses: sburris/dependency-check-action@master
       with:
-        Project-Name: web-dvwa
+        Project-Name: ${{ env.IMAGE_NAME }}
   check-for-secrets:
-    name: Check for Secrets
-    needs: fetch-code
+    name: Detect Secrets
     runs-on: 'ubuntu-latest'
+    needs: fetch-code
     steps:
     - name: trufflehog-actions-scan
       uses: edplato/trufflehog-actions-scan@master
   sonarcloud:
-    name: Run Sonar Scan
+    name: SonarCloud Scan
     runs-on: ubuntu-latest
     needs: fetch-code
     steps:
@@ -52,7 +52,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   Build-publish-Image:
     name: Build and Push Docker Image
-    needs: [dependcy-check, sonarcloud, check-for-secrets]
+    needs: [dependcy-check, check-for-secrets]
     runs-on: ubuntu-latest
     steps:
       -
@@ -73,21 +73,26 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: raniasaleh/web-dvwa:latest
+          tags: ${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   VA:
-    name: VA Scanning
+    name: Anchore Container Scan
     needs: Build-publish-Image
     runs-on: ubuntu-latest
     steps:
-    -
-      name: VA scan
+    - name: Scan current project
       uses: anchore/scan-action@v2
+      id: scan
       with:
-        image: "raniasaleh/web-dvwa:latest"
+        image: "${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:latest"
         fail-build: true
+        acs-report-enable: true
+    - name: upload Anchore scan SARIF report
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
   Deploy:
     needs: Build-publish-Image
     name: Deploy to IBM Cloud
@@ -107,7 +112,7 @@ jobs:
     # Authenticate with IBM Cloud CLI
     - name: Authenticate with IBM Cloud CLI
       run: |
-        ibmcloud login --apikey "${IBM_CLOUD_API_KEY}" -r "${IBM_CLOUD_REGION}" -g asset-test-rania
+        ibmcloud login --apikey "${IBM_CLOUD_API_KEY}" -r "${IBM_CLOUD_REGION}" -g ${IBM_CLOUD_RESOURCE_GROUP}
         ibmcloud cr region-set "${IBM_CLOUD_REGION}"
         ibmcloud cr login
     # Deploy the Docker image to the IKS cluster
@@ -119,9 +124,9 @@ jobs:
   zap_scan:
     needs: Deploy
     runs-on: ubuntu-latest
-    name: Scan the Deployed Website
+    name: OWASP ZAP-DAST
     steps:
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.1.0
         with:
-          target: 'http://169.57.112.57:30001/index.php'
+          target: 'http://${{ env.IP }}:${{ env.PORT }}/'
