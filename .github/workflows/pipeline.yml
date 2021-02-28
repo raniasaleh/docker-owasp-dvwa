@@ -67,6 +67,7 @@ jobs:
         ibmcloud plugin install -f kubernetes-service
         ibmcloud plugin install -f container-registry
 
+        sudo apt-get update
         sudo apt-get install kubectx
     # Authenticate with IBM Cloud CLI
     - name: Authenticate with IBM Cloud CLI
