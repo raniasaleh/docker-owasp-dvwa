@@ -7,11 +7,11 @@ on: [push]
 env:
   IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
   IBM_CLOUD_REGION: us-south
-  IKS_CLUSTER: ${{ secrets.IKS_CLUSTER }} # name or id of cluster
-  NAMESPACE: ${{ secrets.NAMESPACE }}
-  IP: ${{ secrets.IKS_CLUSTER_IP }}
-  IMAGE_NAME: node-hello-world
-  PORT: 30002
+  ICR_NAMESPACE: raniasaleh
+  REGISTRY_HOSTNAME: dockerhub
+  IMAGE_NAME: web-dvwa
+  IKS_CLUSTER: asset-test-rania # name or id of cluster
+
 jobs:
   fetch-code:
     runs-on: 'ubuntu-latest'
@@ -28,11 +28,11 @@ jobs:
     steps:
     - uses: sburris/dependency-check-action@master
       with:
-        Project-Name: ${{ env.IMAGE_NAME }}
+        Project-Name: web-dvwa
   check-for-secrets:
     name: Detect Secrets
-    runs-on: 'ubuntu-latest'
     needs: fetch-code
+    runs-on: 'ubuntu-latest'
     steps:
     - name: trufflehog-actions-scan
       uses: edplato/trufflehog-actions-scan@master
@@ -52,7 +52,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   Build-publish-Image:
     name: Build and Push Docker Image
-    needs: [dependcy-check, check-for-secrets]
+    needs: [dependcy-check, sonarcloud, check-for-secrets]
     runs-on: ubuntu-latest
     steps:
       -
@@ -73,7 +73,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:latest
+          tags: raniasaleh/web-dvwa:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -82,17 +82,12 @@ jobs:
     needs: Build-publish-Image
     runs-on: ubuntu-latest
     steps:
-    - name: Scan current project
+    -
+      name: VA scan
       uses: anchore/scan-action@v2
-      id: scan
       with:
-        image: "${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:latest"
+        image: "raniasaleh/web-dvwa:latest"
         fail-build: true
-        acs-report-enable: true
-    - name: upload Anchore scan SARIF report
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: ${{ steps.scan.outputs.sarif }}
   Deploy:
     needs: Build-publish-Image
     name: Deploy to IBM Cloud
@@ -124,9 +119,9 @@ jobs:
   zap_scan:
     needs: Deploy
     runs-on: ubuntu-latest
-    name: OWASP ZAP-DAST
+    name: Scan the Deployed Website
     steps:
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.1.0
         with:
-          target: 'http://${{ env.IP }}:${{ env.PORT }}/'
+          target: 'http://169.57.112.57:30001/index.php'
