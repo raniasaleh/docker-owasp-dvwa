@@ -14,6 +14,7 @@ env:
 
 jobs:
   sonarcloud:
+    name: Run Sonar Scan
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,7 +24,7 @@ jobs:
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
-        GITHUB_TOKEN: ${{ secrets.repo_token }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   Build-publish-Image:
     name: Build and Push Docker Image
@@ -52,7 +53,7 @@ jobs:
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   Deploy:
-    needs: Build-publish-Image
+    needs: [sonarcloud, Build-publish-Image]
     name: Deploy to IBM Cloud
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +70,7 @@ jobs:
 
         curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
         sudo apt-get update
-        sudo apt-get install -y kubelet kubeadm kubectl  
+        sudo apt-get install -y kubelet kubeadm kubectl
     # Authenticate with IBM Cloud CLI
     - name: Authenticate with IBM Cloud CLI
       run: |
