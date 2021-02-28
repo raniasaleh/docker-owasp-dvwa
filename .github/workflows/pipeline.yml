@@ -50,6 +50,11 @@ jobs:
           push: true
           tags: raniasaleh/web-dvwa:latest
       -
+          name: VA Scaning
+          uses: Azure/container-scan@v0
+          with:
+            image-name: contoso.azurecr.io/k8sdemo:${{ github.sha }}
+      -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   Deploy:
@@ -70,7 +75,7 @@ jobs:
 
         curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
         sudo apt-get update
-        sudo apt-get install -y kubelet kubeadm kubectl
+        sudo apt-get install -y  kubeadm 
     # Authenticate with IBM Cloud CLI
     - name: Authenticate with IBM Cloud CLI
       run: |
@@ -88,7 +93,7 @@ jobs:
   zap_scan:
     needs: Deploy
     runs-on: ubuntu-latest
-    name: Scan he Deployed Website
+    name: Scan the Deployed Website
     steps:
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.1.0
