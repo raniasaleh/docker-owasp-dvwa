@@ -14,7 +14,7 @@ env:
 
 jobs:
   Build-publish-Image:
-    name: Build-publish-Image
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
     steps:
       -
@@ -41,7 +41,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
   Deploy:
     needs: Build-publish-Image
-    name: Deploy
+    name: Deploy to IBM Cloud
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -66,6 +66,8 @@ jobs:
       run: |
         ibmcloud ks cluster config --cluster $IKS_CLUSTER
         kubectl config current-context
+        kubectl apply -f namespace.yaml
+        kubens web-dvwa
         kubectl apply -f deployment.yaml
   zap_scan:
     needs: Deploy
