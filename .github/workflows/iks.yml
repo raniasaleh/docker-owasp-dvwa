@@ -13,8 +13,8 @@ env:
   IKS_CLUSTER: asset-test-rania # name or id of cluster
 
 jobs:
-  setup-build-publish:
-    name: setup-build-publish
+  Build-publish-Image:
+    name: Build-publish-Image
     runs-on: ubuntu-latest
     steps:
       -
@@ -40,7 +40,7 @@ jobs:
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   Deploy:
-    needs: setup-build-publish
+    needs: Build-publish-Image
     name: Deploy
     runs-on: ubuntu-latest
     steps:
@@ -67,3 +67,12 @@ jobs:
         ibmcloud ks cluster config --cluster $IKS_CLUSTER
         kubectl config current-context
         kubectl apply -f deployment.yaml
+  zap_scan:
+    needs: Deploy
+    runs-on: ubuntu-latest
+    name: Scan the deployed website
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.1.0
+        with:
+          target: 'http://169.57.112.57:30001/index.php'
