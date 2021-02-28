@@ -14,7 +14,7 @@ on: [push]
 env:
   IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
   IBM_CLOUD_REGION: us-south
-  ICR_NAMESPACE: ${{ secrets.ICR_NAMESPACE }}
+  ICR_NAMESPACE: raniasaleh
   REGISTRY_HOSTNAME: dockerhub
   IMAGE_NAME: web-dvwa
   IKS_CLUSTER: asset-test-rania # name or id of cluster
