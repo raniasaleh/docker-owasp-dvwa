@@ -51,6 +51,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: VA scan
+        uses: anchore/scan-action@v1
+        with:
+          image-reference: "raniasaleh/web-dvwa:latest"
+          dockerfile-path: "./Dockerfile"
+          fail-build: true
+      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
