@@ -75,4 +75,5 @@ jobs:
       run: |
         ibmcloud ks cluster config --cluster $IKS_CLUSTER
         kubectl config current-context
-        pwd
+        ls -al 
+        kubectl apply -f ../deployment.yaml
