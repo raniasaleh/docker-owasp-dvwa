@@ -15,7 +15,8 @@ env:
 jobs:
   fetch-code:
     runs-on: 'ubuntu-latest'
-    steps: Fetch latest code
+    name: Fetch latest code
+    steps:
     - uses: actions/checkout@master
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
