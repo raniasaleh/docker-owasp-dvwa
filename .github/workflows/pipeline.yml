@@ -50,17 +50,6 @@ jobs:
           push: true
           tags: raniasaleh/web-dvwa:latest
       -
-        name: VA
-        uses: anchore/scan-action@v2
-          id: scan
-          with:
-            image: "raniasaleh/web-dvwa:latest"
-            acs-report-enable: true
-      - name: upload Anchore scan SARIF report
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
-      -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   Deploy:
