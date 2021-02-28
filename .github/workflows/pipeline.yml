@@ -13,10 +13,7 @@ env:
   IKS_CLUSTER: asset-test-rania # name or id of cluster
 
 jobs:
-  dependcy:
-    - uses: sburris/dependency-check-action@master
-      with:
-        Project-Name: web-dvwa
+
   check-for-secrets:
     name: Check for Secrets
     runs-on: 'ubuntu-latest'
@@ -58,8 +55,8 @@ jobs:
         name: VA scan
         uses: anchore/scan-action@v2
         with:
-          image-reference: "raniasaleh/web-dvwa:latest"
-          dockerfile-path: "./Dockerfile"
+          image: "raniasaleh/web-dvwa:latest"
+          path: "./Dockerfile"
           fail-build: true
       -
         name: Build and push
