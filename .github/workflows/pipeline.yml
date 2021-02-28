@@ -52,7 +52,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: VA scan
-        uses: anchore/scan-action@v1
+        uses: anchore/scan-action@v2
         with:
           image-reference: "raniasaleh/web-dvwa:latest"
           dockerfile-path: "./Dockerfile"
