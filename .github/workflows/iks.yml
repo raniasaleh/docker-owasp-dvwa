@@ -22,7 +22,8 @@ env:
   PORT: 5001
 
 jobs:
-  docker:
+  setup-build-publish:
+    name: setup-build-publish
     runs-on: ubuntu-latest
     steps:
       -
@@ -47,8 +48,8 @@ jobs:
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-  setup-build-publish-deploy:
-    needs: docker
+  Deploy:
+    needs: setup-build-publish
     name: Deploy
     runs-on: ubuntu-latest
     steps:
