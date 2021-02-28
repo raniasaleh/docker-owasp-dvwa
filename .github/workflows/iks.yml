@@ -12,7 +12,6 @@ on: [push]
 
 # Environment variables available to all jobs and steps in this workflow
 env:
-  GITHUB_SHA: ${{ github.sha }}
   IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
   IBM_CLOUD_REGION: us-south
   ICR_NAMESPACE: ${{ secrets.ICR_NAMESPACE }}
@@ -21,7 +20,6 @@ env:
   IKS_CLUSTER: asset-test-rania # name or id of cluster
   DEPLOYMENT_NAME: web-dvwa
   PORT: 5001
-  PROJECT_PATH: .
 
 jobs:
   docker:
@@ -45,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: raniasaleh/web-dvwa:latest
+          tags: ${ICR_NAMESPACE}/web-dvwa:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -75,5 +73,4 @@ jobs:
       run: |
         ibmcloud ks cluster config --cluster $IKS_CLUSTER
         kubectl config current-context
-        ls -al 
-        kubectl apply -f ../deployment.yaml
+        ls -al ../
