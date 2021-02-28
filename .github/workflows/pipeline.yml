@@ -16,7 +16,6 @@ jobs:
   DependencyCheck:
     name: Dependency Check
     steps:
-    steps:
     - uses: symfonycorp/security-checker-action@v2
       with:
           disable-exit-code: 1
