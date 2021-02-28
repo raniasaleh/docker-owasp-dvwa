@@ -39,6 +39,7 @@ jobs:
   sonarcloud:
     name: Run Sonar Scan
     runs-on: ubuntu-latest
+    needs: fetch-code
     steps:
     - uses: actions/checkout@v2
       with:
