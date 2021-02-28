@@ -13,7 +13,11 @@ env:
   IKS_CLUSTER: asset-test-rania # name or id of cluster
 
 jobs:
-
+  dependcy:
+    steps:
+    - uses: sburris/dependency-check-action@master
+      with:
+        Project-Name: web-dvwa
   check-for-secrets:
     name: Check for Secrets
     runs-on: 'ubuntu-latest'
