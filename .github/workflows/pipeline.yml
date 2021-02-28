@@ -64,13 +64,13 @@ jobs:
         with:
           push: true
           tags: raniasaleh/web-dvwa:latest
-      -
-        name: VA scan
-        uses: anchore/scan-action@v2
-        with:
-          image: "raniasaleh/web-dvwa:latest"
-          # path: "./Dockerfile"
-          fail-build: true
+      # -
+      #   name: VA scan
+      #   uses: anchore/scan-action@v2
+      #   with:
+      #     image: "raniasaleh/web-dvwa:latest"
+      #     # path: "./Dockerfile"
+      #     fail-build: false
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
